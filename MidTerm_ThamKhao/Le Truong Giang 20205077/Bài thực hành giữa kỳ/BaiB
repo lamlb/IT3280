@@ -1,0 +1,112 @@
+.data
+msg_input: .asciiz "Nhap So Luong Phan Tu Mang: "
+msg_input2: .asciiz "Nhap Phan Tu: "
+msg_input3: .asciiz "Nhap M: "
+space: .asciiz "\t"
+msg_output: .asciiz "Ket Qua: "
+msg_output2: .asciiz "Khong co ket qua "
+arr: .word 0:100
+.text
+
+# nhap so phan tu 
+	li $v0, 4
+	la $a0, msg_input
+	syscall
+	
+
+	li $v0, 5
+	syscall
+	move $t0, $v0
+	
+#nhap cac phan tu
+	li $t1,0
+	la $t2, arr
+	
+	li $v0, 4
+	la $a0, msg_input2
+	syscall
+ nhap:	
+ 	li $v0, 5
+ 	syscall
+ 	sw $v0, 0($t2)
+ 	addi $t1 ,$t1 ,1
+ 	addi $t2 ,$t2 ,4
+ 	
+ 	beq $t1, $t0, batdau
+ 	j nhap
+ batdau:	
+ 	la $t2, arr
+ 	li $t1, -1
+ 	addi $t2 ,$t2 ,-4
+ 	li $s2 ,0 # thiet lap maxle(so le lon nhat)
+ 	
+ 	
+ 	
+ sole:
+ 	addi $t2 ,$t2 ,4
+ 	addi $t1 ,$t1 ,1
+ 	beq $t1 ,$t0 ,batdaulai
+ 	lw $s0 , ($t2)
+ 	andi $s1 ,$s0 ,1 #kiem tra so dang xet co phai so le hay khong
+ 	beq $s1 ,0 , sole #Neu sai quay lai vong lap
+ 	#Neu dung tiep tuc chay
+ 	slt $t3 ,$s2 ,$s0 #Xet maxle < s0
+ 	beq $t3 ,0 ,sole #Neu sai quay lai vong lap
+ 	#Neu dung thi...
+ 	addi $s2 ,$s0, 0 # gan gia tri S0 vao maxle
+ 	j sole
+ 	
+batdaulai:
+	
+ 	la $t2, arr
+ 	li $t1, -1
+ 	addi $t2 ,$t2 ,-4
+ 	li $s3 ,1
+ 
+ sochan:
+ 	addi $t2 ,$t2 ,4
+ 	addi $t1 ,$t1 ,1
+ 	beq $t1 ,$t0 ,print
+ 	lw $s0 , ($t2)
+ 	andi $s1 ,$s0 ,1 #kiem tra so dang xet co phai so chan hay khong
+ 	beq $s1 ,1 , sochan #Neu sai quay lai vong lap
+ 	#Neu dung tiep tuc chay
+ 	slt $t3 ,$s2 ,$s0 #Xet maxle < s0
+ 	beq $t3 ,0 ,sochan #Neu sai quay lai vong lap
+ 	#Neu dung thi...
+ 	beq $s3 ,1 ,gan
+ 	slt $t3 ,$s0 ,$s3 # Xet s0 < minchan 
+ 	beq $t3 ,0 ,sochan #Neu sai thi quay lai vong lap
+ 	#Neu dung thi...
+ 	gan:addi $s3 ,$s0, 0 #gan gia tri s0 vao minchan
+
+ 	
+	j sochan
+
+  print:
+  	beq $s3 ,1 ,print2
+  	li $v0, 4
+	la $a0, msg_output
+	syscall 
+ 	
+ 	li $v0, 1
+	addi $a0, $s3, 0
+	syscall
+	
+	la $t3, space
+	
+	li $v0, 4
+	addi $a0, $t3, 0
+	syscall
+
+ 	
+ 	
+ 	j end
+ print2:
+ 	li $v0, 4
+	la $a0, msg_output2
+	syscall 
+ 	
+end:		
+ 	
+ 	

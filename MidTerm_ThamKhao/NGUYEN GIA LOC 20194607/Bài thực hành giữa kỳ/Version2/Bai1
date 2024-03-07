@@ -1,0 +1,35 @@
+.text
+main:
+	li $v0,5
+	syscall
+	move $a0,$v0 #nhap M       # $ao = $vo chua gia tri nhap vao
+	
+	li $v0,5
+	syscall 
+	move $a1,$v0 # nhap N      # $a1 = $v0 chua gia tri nhap vao
+	
+	
+	j UCLN # goi ham UCLN
+UCLN:
+   
+    # int UCLN(int a0,a1)
+    # if( a1=0) return a0
+    # return UCLN(a1, a0%a1)
+
+    beq $a1, $zero, return # if a1 == 0 return a0
+
+    div $a0, $a1 # m/n
+    addi $a0, $a1, 0
+    mfhi $a1 # lay du phep chia m/n
+    j UCLN
+
+return:
+    add $v0, $zero, $a0 # return $v0 = $s0 
+    j print
+print:
+	li $v0,1
+	syscall # in ket qua 
+	
+	li $v0,10 #thoat chuong trinh
+	syscall
+	

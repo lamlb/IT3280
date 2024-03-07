@@ -1,0 +1,43 @@
+.data
+ nhap: .asciiz "Nhap xau : "
+ str: .asciiz " Ch"
+ space: .ascii " "
+ xau: .space 100
+ sotu:	.asciiz "so tu bat dau bang Ch la: "
+ .text
+ main:
+
+ 	li	$v0,4
+	la 	$a0, nhap
+	syscall
+ 	#Nhap xau tu ban phim
+ 	la 	$a0, xau
+	li 	$a1, 100
+	li 	$v0, 8
+	syscall
+	
+la $t6, xau
+la $t7, str
+	li 	$a1, 0       # So tu Ch can tinh
+	addi 	$t6, $t6, -1 #Them space cho tu dau tien
+	lb 	$s0, 0($t7)  # s0 = " "
+	lb 	$s1, 1($t7)  # s1 = "C"
+	lb 	$s2, 2($t7)  # s2 = "h"
+
+loop:
+#Doc lan luot 3 chu cai lien nhau trong xau
+	lb 	$t1, 0($t6)
+	lb 	$t2, 1($t6)
+	lb 	$t3, 2($t6)
+	beq 	$t2, $0, exit	#Chu cai thu 2 = 0 thi exit
+	addi 	$t6, $t6, 1	#Nhay sang chu cai tiep
+	#Kiem tra 3 chu cai co trung " Ch" khong
+	bne 	$s0, $t1, loop	
+	bne 	$s1, $t2, loop
+	bne 	$s2, $t3, loop
+	add 	$a1, $a1, 1	#Trung thi bien dem a1 + 1
+	j 	loop
+exit:
+	li	$v0, 56
+	la 	$a0, sotu
+	syscall

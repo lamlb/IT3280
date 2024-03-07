@@ -1,0 +1,52 @@
+.text
+main:
+	li $v0,5
+	syscall
+	move $a0,$v0 #nhap M       # $ao = $vo
+	
+	li $v0,5
+	syscall 
+	move $a1,$v0 # nhap N      # $a1 = $v0
+	
+	
+	jal UCLN # goi ham UCLN
+
+	add $a0,$v0,$zero 
+	li $v0,1
+	syscall # in ket qua 
+	
+	li $v0,10 #thoat chuong trinh
+	syscall
+
+
+UCLN:
+    #UCLN(n1, n2)
+    # m = $a0
+    # n = $a1
+
+    addi $sp, $sp, -12
+    sw $ra, 0($sp) # luu ham vao stack
+    sw $s0, 4($sp) # luu gia tri $s0 vao stack
+    sw $s1, 8($sp)  # luu gia tri $s1 vao stack
+
+    add $s0, $a0, $zero # $s0 = $a0 ( value M ) 
+    add $s1, $a1, $zero # $s1 = $a1 ( value M ) 
+
+    addi $t1, $zero, 0 # $t1 = 0
+    beq $s1, $t1, return # if s1 == 0 return
+
+    add $a0, $zero, $s1 #  $a0 = $s1
+    div $s0, $s1 # m/n
+    mfhi $a1 # lay du phep chia m/n
+
+    jal UCLN
+
+exitUCLN:
+    lw $ra, 0 ($sp)  # doc thanh ghi ra tu stack
+    lw $s0, 4 ($sp)
+    lw $s1, 8 ($sp)
+    addi $sp,$sp , 12 # bring back stack pointer
+    jr $ra
+return:
+    add $v0, $zero, $s0 # return $v0 = $s0 ( m)
+    j exitUCLN

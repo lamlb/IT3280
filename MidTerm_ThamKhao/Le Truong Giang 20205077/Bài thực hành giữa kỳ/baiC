@@ -1,0 +1,57 @@
+.data
+msg_input:	.asciiz	"Nhap xau: "
+string:	.space	100
+space: .asciiz "\t"
+.text
+main:
+	li $v0, 4
+	la $a0, msg_input
+	syscall
+	
+
+	li $v0, 8
+	la $a0, string
+	li $a1, 100
+	syscall
+	move $t0, $v0
+	la	$t1, string		# Dia chi dau cua tu ngan nhat
+	la	$t2, string		# Dia chi cuoi cua tu ngan nhat
+	la	$t3, 100		# Do ngan cua tu ngan nhat
+	
+	la	$s1, string		# Dia chi dau cua tu dang xet
+	la	$s2, string		# Dia chi cuoi cua tu dang xet
+	la	$s3, 0		# Do ngan cua tu dang xet
+	
+	xuli:
+		lb $s4 , 0($s2)
+		beq $s4 ,10 ,new
+		beq $s4 ,32 , new
+			addi $s2, $s2, 1	# s2 += 1
+			addi $s3, $s3, 1 	#s3 += 1	
+		j xuli
+	
+	new:	
+		slt $s0 ,$s3 ,$t3 # Neu Do dai cua tu dang xet < Do dai cua tu ngan nhat
+		beq $s0 , 1 , ngannhat 
+	f1:
+		addi $s1, $s2, 1	# Dia chi dau cua tu dang xet s1 = s2 + 1
+		addi $s2, $s2, 1	# Dia chi dau cua tu dang xet s2 = s2 + 1
+			la $s3, 0		# Do ngan tu dang xet s3 = 0	
+		beq $s4 , 10 ,print
+		j xuli
+		
+	ngannhat:
+		addi $t1, $s1, 0	# Luu dia chi dau cua tu ngan nhat
+		sub $t2, $s2, 1		# Luu dia chi cuoi cua tu ngan nhat
+		addi $t3, $s3, 0	# Luu do ngan cua tu ngan nhat
+		j f1
+	
+	print:
+		li 	$v0, 11
+		lb 	$a0, 0($t1)	# in ra 1 ky tu
+		syscall
+		blt $t2, $t1, end	# Neu t2 < t1 vi tri cuoi thi thoat
+		addi $t1, $t1, 1	# t1 += 1
+		j print
+	end:
+	

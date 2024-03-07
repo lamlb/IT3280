@@ -1,0 +1,66 @@
+.data
+N: .asciiz "Nhap N: "
+Co: .asciiz "Co "
+Khong: .asciiz "Khong "
+Trung: .asciiz "ton tai 2 chu so trung nhau"
+Khongdung: .asciiz "hop le"
+.text
+	j	main
+Cotrung:
+	li	$v0, 59
+	la	$a0, Co
+	la 	$a1, Trung
+	syscall
+	j 	exit
+Khongtrung:
+	li	$v0, 59
+	la 	$a0, Khong
+	la 	$a1, Trung
+	syscall
+	j	exit
+Khonghople:
+	li	$v0, 59
+	la	$a0, Khong
+	la	$a1, Khongdung
+	syscall
+	j	exit
+main:
+	#Nhap N
+	li	$v0, 51
+	la	$a0, N
+	syscall
+	slti	$a3, $a0, 10	#kiem tra du lieu vao
+	bne 	$a3, $0, Khonghople
+	move 	$s1, $a0	#s1 = N
+	li 	$t1, 0		#khoi chay so chu so la 0
+	li	$t2, 10		#hang so 10
+	li	$t4, 0		#bien chay vong lap
+#Vong lap tim so chu so cua N
+loop:
+	div	$s1, $t2	
+	addi	$t1, $t1, 1
+	mfhi	$t0		#lay phan du phep chia cho vao stack 
+	addi 	$sp, $sp, -4
+	sw	$t0, 0($sp)
+	mflo	$s1
+	beq	$s1, $0, kiemtra	#Khi phan nguyen = 0 thi ket thuc vong lap
+	j	loop
+
+kiemtra:
+	addi	$t4, $t4, 1
+	beq	$t4, $t1, Khongtrung	#bien dem 
+	lw	$s2, 0($sp)		#lay du lieu tu stack ra
+	move	$t9, $sp		#luu dia chi con tro hien tai vao cho moi
+	sub	$t5, $t1, $t4		#t5 so lan chay vong lap con
+	li	$t6, 0			#bien dem vong lap con
+	vonglap:
+	addi	$t6, $t6, 1
+	addi	$t9, $t9, 4
+	lw	$s3, 0($t9)
+	beq	$s3, $s2, Cotrung	
+	beq	$t6, $t5, a		#khi t6 = t5 thi dung vong lap con
+	j	vonglap
+a:	
+	addi	$sp, $sp, 4
+	j	kiemtra
+exit:

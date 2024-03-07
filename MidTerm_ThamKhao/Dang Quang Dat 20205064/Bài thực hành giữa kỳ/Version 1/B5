@@ -1,0 +1,86 @@
+.data
+msg_input: .asciiz "Nhap So Luong Phan Tu Mang: "
+msg_input2: .asciiz "Nhap Phan Tu: "
+msg_input3: .asciiz "Nhap M: "
+space: .asciiz "\t"
+msg_output: .asciiz "Ket Qua: "
+arr: .word 0:100
+
+.text
+main:
+
+# Nhap So Luong Phan Tu
+	la $a0,msg_input
+	li $v0,4
+	syscall
+
+# Chuyen qua thanh ghi $t0
+	li $v0,5
+	syscall
+	move $t0,$v0		# t0: so phan tu cua mang
+# Nhap cac phan tu cua mang
+	li $v0,4
+	la $a0,msg_input2
+	syscall
+
+li $t1,0
+la $t2,arr
+move	$t6, $t2
+
+lap:
+	li $v0,5
+	syscall
+	sw $v0,($t2)
+	addi $t1,$t1,1
+	addi $t2,$t2,4
+	blt $t1,$t0,lap
+li $t1,0
+la $t2,arr
+la $t5, arr
+addi	$t0, $t0, 1
+# Nhap M
+	li $v0,4
+	la $a0,msg_input3
+	syscall
+	li $v0,5
+	syscall
+	move $t3,$v0		#t3: M
+#xu li
+	mul	$t5, $t0, 4
+	add	$t2, $t2, $t5
+	addi	$t2, $t2, -4
+	sw	$t3, ($t2)
+loop:
+	
+	lw	$s1, ($t2)
+	addi	$t9, $t2, -4
+	lw 	$s2, ($t9)
+	slt	$s3, $s2, $s1
+	bne	$s3, $0, a
+	j	inmang
+	a:
+	sw	$s1, ($t9)
+	sw	$s2, ($t2)
+	b:
+	addi	$t2, $t2, -4
+	beq	 $t2, $t6, inmang
+
+	j	loop
+li $t1,0
+la $t2,arr
+#in mang
+inmang:
+	lw 	$t4, ($t6)
+	li 	$v0, 1
+	move 	$a0, $t4
+	syscall
+	# KHoang Trang
+	li $v0,4
+	la $a0,space
+	syscall
+	addi	$t1, $t1, 1
+	addi 	$t6,$t6, 4
+	beq	$t0, $t1, exit
+	j	 inmang
+exit:
+	

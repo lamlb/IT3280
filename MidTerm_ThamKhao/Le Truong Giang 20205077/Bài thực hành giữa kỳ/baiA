@@ -1,0 +1,70 @@
+.data
+arr: .word 0:100
+msg_input: .asciiz "Nhap N: "
+space: .asciiz "\t"
+enter: .asciiz "\n"
+msg_output: .asciiz "Chu so nho nhat cua N la: "
+msg_output2: .asciiz "Nhap loi xin nhap lai!"
+.text	
+nhapN:
+	la $s3 ,10 
+	la $t3 , space
+	# nhap N
+	li $v0, 4
+	la $a0, msg_input
+	syscall
+	
+	li $v0, 5
+ 	syscall
+ 	move $t0 ,$v0 # chuyen gia tri cua N vao $t0
+ 	
+ 	la $t2 ,arr
+ 	
+ truonghop:
+ 	slti $t4 ,$t0 ,9 # N < 9 
+ 	beq $t4 ,1 ,loi # Neu dung thi ket thuc
+ 	#Neu sai tiep tuc chay chuong trinh
+ 	
+ 	li $s1 ,10 # gan gia tri cua chu so nho nhat vao $s1
+ 	addi $t5, $t0, 0 	# Luu gia tri cua N vao t5
+ xuli:	
+ 	div  $t5 ,$s3 
+ 	beq $t5 ,0 ,print
+ 	mfhi $s0
+ 	mflo $t5	
+ 	slt $t4 ,$s0 ,$s1 	# Xet s0 < min
+ 	beq $t4 ,0 ,xuli 	# Neu sai quay lai vong lap
+ 	#Neu dung tiep tuc vong lap
+ 	addi $s1 ,$s0 ,0
+ 	
+ 	j xuli
+ 	
+ print:
+	li $v0, 4
+	la $a0, msg_output
+	syscall 
+ 	
+ 	li $v0, 1
+	addi $a0, $s1, 0
+	syscall
+	
+	li $v0, 4
+	addi $a0, $t3, 0
+	syscall
+
+
+ 	j end
+ 	
+ 	#thong bao khi nhap loi
+ loi:
+ 	li $v0, 4
+	la $a0, msg_output2
+	syscall 
+	
+	li $v0, 4
+	la $a0, space
+	syscall 
+	
+	j nhapN
+ end:
+ 	
